@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>My Google Map</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<h1>Google Map</h1>
+<div id="map"></div>
+<script type="text/javascript" src="js/index2.js"></script>
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH1lODG-3BdFEWUIzfroUaO_Iur4IXVis&callback=initMap&libraries=&v=weekly"
+        async
+></script>
+
+<script>
+    //The data of bike stations is divided into dynamic data and static data, which is held in two different APIs,
+    //Create two variables stationInfo and bikeInfo store the data parsed from the json files.
+    var stationInfo
+    // This XMLHttpRequest is used to parse info from the first json file.
+    var xmlhttp = new XMLHttpRequest();
+    var url ="https://dublinbikeapi.herokuapp.com/stations"
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            //Parse the JSON data to a JavaScript variable.
+            stationInfo = JSON.parse(xmlhttp.responseText);
+            initMap(stationInfo);
+        }
+    }
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+
+
+    var bikeInfo
+    var xmlhttp2 = new XMLHttpRequest();
+    var url2 ="https://dublinbikeapi.herokuapp.com/bike_availibility"
+    xmlhttp2.onreadystatechange = function() {
+        if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
+            //Parse the JSON data to a JavaScript variable.
+            bikeInfo = JSON.parse(xmlhttp2.responseText);
+            initMap(bikeInfo);
+        }
+    }
+    xmlhttp2.open("GET", url2, true);
+    xmlhttp2.send();
+
+</script>
+</body>
+</html>
+
