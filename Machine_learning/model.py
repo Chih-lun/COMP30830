@@ -25,3 +25,6 @@ def build_model(number,step):
     pred = result.forecast(y=df_test_station.values, steps=step)
     df_pred = pd.DataFrame(pred, columns=["Aviable_bike_stands", "Available_bike", "Temp", "Humidity"])
     return df_pred
+
+
+# print(build_model(10, 2)["Temp"]) simple test
