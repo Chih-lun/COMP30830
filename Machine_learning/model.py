@@ -1,4 +1,3 @@
-from pip import main
 from statsmodels.tsa.api import VAR
 from sqlalchemy import create_engine
 import pandas as pd
@@ -16,12 +15,13 @@ df_weather = pd.read_sql_table("weather", engine, parse_dates="True", index_col=
 df_combine = df_bike.merge(df_weather,left_on='Time', right_on='Time')
 
 def build_model(number,step):
-    # 5 min per step
+    # 10 min per step
     df_test_station=df_combine.groupby("Number").get_group(number)
     df_test_station = df_test_station.drop(['Number', 'ID_x', 'ID_y', 'Status', 'Weather', "Feels_like"], axis=1)
     df_test_station = df_test_station.set_index('Time')
     
     model = VAR(df_test_station)
     result = model.fit(4)
-    pred = result.forecast(y=df_test_station, steps=12) 
-    return pred
+    pred = result.forecast(y=df_test_station.values, steps=step)
+    df_pred = pd.DataFrame(pred, columns=["Aviable_bike_stands", "Available_bike", "Temp", "Humidity"])
+    return df_pred
