@@ -27,4 +27,5 @@ def build_model(number,step):
     return df_pred
 
 
-# print(build_model(10, 2)["Temp"]) simple test
+# Simple test
+print(build_model(10, 2)["Temp"]) 
