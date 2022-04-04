@@ -79,7 +79,7 @@ df_weather = pd.DataFrame(list(zip(weather_id, weather_time, weather_weather, we
 
 df_combine = df_bike.merge(df_weather,left_on='Time', right_on='Time')
 
-def build_model(number,step):
+def build_model(number,step,type):
     # 10 min per step
     df_test_station=df_combine.groupby("Number").get_group(number)
     df_test_station = df_test_station.drop(['Number', 'ID_x', 'ID_y', 'Status', 'Weather', "Feels_like"], axis=1)
@@ -88,8 +88,8 @@ def build_model(number,step):
     model = VAR(df_test_station)
     result = model.fit(4)
     pred = result.forecast(y=df_test_station.values, steps=step)
-    df_pred = pd.DataFrame(pred, columns=["Aviable_bike_stands", "Available_bike", "Temp", "Humidity"])
-    return int(round(df_pred["Temp"].mean()))
+    df_pred = pd.DataFrame(pred, columns=["Available_bike_stands", "Available_bike", "Temp", "Humidity"])
+    return int(round(df_pred[type].mean()))
 
 @app.route('/')
 def home():
@@ -101,7 +101,10 @@ def home():
     for i in stations_data.json():
         prediction = {}
         prediction['Number'] = i['Number']
-        prediction['Prediction'] = round(build_model(i['Number'], 1))
+        prediction['Temp'] = round(build_model(i['Number'], 1, 'Temp'))
+        prediction['Humidity'] = round(build_model(i['Number'], 1, 'Humidity'))
+        prediction['Available_bike'] = round(build_model(i['Number'], 1, 'Available_bike'))
+        prediction['Available_bike_stands'] = round(build_model(i['Number'], 1, 'Available_bike_stands'))
         predict_data.append(prediction)
     print(str(predict_data))
 
