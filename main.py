@@ -42,44 +42,53 @@ class weather(db.Model):
         self.Feels_like = Feels_like
         self.Humidity = Humidity
 
-#build model
-all_bike = bike_availibility.query.all()
-bike_id = []
-bike_number = []
-bike_time = []
-bike_available_bike_stands = []
-bike_available_bikes = []
-bike_status = []
-for i in all_bike:
-    bike_id.append(i.ID)
-    bike_number.append(i.Number)
-    bike_time.append(i.Time)
-    bike_available_bike_stands.append(i.Available_bike_stands)
-    bike_available_bikes.append(i.Available_bikes)
-    bike_status.append(i.Status)
-df_bike = pd.DataFrame(list(zip(bike_id, bike_number, bike_time, bike_available_bike_stands, bike_available_bikes, bike_status)),
-                           columns =['ID', 'Number', 'Time', 'Available_bike_stands', 'Available_bikes', 'Status'])
+@app.route('/')
+def home():
+    stations_data = requests.get('https://dublinbikeapi.herokuapp.com/stations')
+    bike_availability_data = requests.get('https://dublinbikeapi.herokuapp.com/bike_availibility')
+    weather_data = requests.get('https://dublinbikeapi.herokuapp.com/weather')
 
-all_weather = weather.query.all()
-weather_id = []
-weather_time = []
-weather_weather = []
-weather_temp = []
-weather_feels_like = []
-weather_humidity = []
-for i in all_weather:
-    weather_id.append(i.ID)
-    weather_time.append(i.Time)
-    weather_weather.append(i.Weather)
-    weather_temp.append(i.Temp)
-    weather_feels_like.append(i.Feels_like)
-    weather_humidity.append(i.Humidity)
-df_weather = pd.DataFrame(list(zip(weather_id, weather_time, weather_weather, weather_temp, weather_feels_like, weather_humidity)),
-                              columns =['ID', 'Time', 'Weather', 'Temp', 'Feels_like', 'Humidity'])
+    number = 2
+    step = 1
 
-df_combine = df_bike.merge(df_weather,left_on='Time', right_on='Time')
+    #build model
+    all_weather = weather.query.all()
+    weather_id = []
+    weather_time = []
+    weather_weather = []
+    weather_temp = []
+    weather_feels_like = []
+    weather_humidity = []
+    for i in all_weather:
+        weather_id.append(i.ID)
+        weather_time.append(i.Time)
+        weather_weather.append(i.Weather)
+        weather_temp.append(i.Temp)
+        weather_feels_like.append(i.Feels_like)
+        weather_humidity.append(i.Humidity)
+    df_weather = pd.DataFrame(list(zip(weather_id, weather_time, weather_weather, weather_temp, weather_feels_like, weather_humidity)),
+                                  columns =['ID', 'Time', 'Weather', 'Temp', 'Feels_like', 'Humidity'])
 
-def build_model(number,step,type):
+
+    all_bike = bike_availibility.query.filter_by(Number=number).all()
+    bike_id = []
+    bike_number = []
+    bike_time = []
+    bike_available_bike_stands = []
+    bike_available_bikes = []
+    bike_status = []
+    for i in all_bike:
+        bike_id.append(i.ID)
+        bike_number.append(i.Number)
+        bike_time.append(i.Time)
+        bike_available_bike_stands.append(i.Available_bike_stands)
+        bike_available_bikes.append(i.Available_bikes)
+        bike_status.append(i.Status)
+    df_bike = pd.DataFrame(list(zip(bike_id, bike_number, bike_time, bike_available_bike_stands, bike_available_bikes, bike_status)),
+                               columns =['ID', 'Number', 'Time', 'Available_bike_stands', 'Available_bikes', 'Status'])
+
+    df_combine = df_bike.merge(df_weather,left_on='Time', right_on='Time')
+
     # 10 min per step
     df_test_station=df_combine.groupby("Number").get_group(number)
     df_test_station = df_test_station.drop(['Number', 'ID_x', 'ID_y', 'Status', 'Weather', "Feels_like"], axis=1)
@@ -89,23 +98,15 @@ def build_model(number,step,type):
     result = model.fit(4)
     pred = result.forecast(y=df_test_station.values, steps=step)
     df_pred = pd.DataFrame(pred, columns=["Available_bike_stands", "Available_bike", "Temp", "Humidity"])
-    return int(round(df_pred[type].mean()))
-
-@app.route('/')
-def home():
-    stations_data = requests.get('https://dublinbikeapi.herokuapp.com/stations')
-    bike_availability_data = requests.get('https://dublinbikeapi.herokuapp.com/bike_availibility')
-    weather_data = requests.get('https://dublinbikeapi.herokuapp.com/weather')
 
     predict_data = []
-    for i in stations_data.json():
-        prediction = {}
-        prediction['Number'] = i['Number']
-        prediction['Temp'] = round(build_model(i['Number'], 1, 'Temp'))
-        prediction['Humidity'] = round(build_model(i['Number'], 1, 'Humidity'))
-        prediction['Available_bike'] = round(build_model(i['Number'], 1, 'Available_bike'))
-        prediction['Available_bike_stands'] = round(build_model(i['Number'], 1, 'Available_bike_stands'))
-        predict_data.append(prediction)
+    prediction = {}
+    prediction['Number'] = number
+    prediction['Temp'] = int(round(df_pred["Temp"].mean()))
+    prediction['Humidity'] = int(round(df_pred["Humidity"].mean()))
+    prediction['Available_bike'] = int(round(df_pred["Available_bike"].mean()))
+    prediction['Available_bike_stands'] = int(round(df_pred["Available_bike_stands"].mean()))
+    predict_data.append(prediction)
     print(str(predict_data))
 
     return render_template('index.html', stations=stations_data.text, bike_availability=bike_availability_data.text, weather=weather_data.text, predict_data=str(predict_data))
