@@ -53,22 +53,29 @@ with connection:
         rows = cursor.fetchall()
         current_stations_number = [i[0] for i in rows]
 
+connection = pymysql.connect(host='database-1.c5ekejexdq4k.us-east-1.rds.amazonaws.com', user='admin', password='group888', database='dublin_bike')
 
+with connection:
+    with connection.cursor() as cursor:
         # bike information
         for i in bike_stations:
             # add new station if any is new
             if i.number not in current_stations_number:
                 sql = "INSERT INTO `stations` (`Number`, `Address`, `Latitude`, `Longitude`) VALUES (%s, %s, %s, %s)"
                 cursor.execute(sql, (i.number, i.address, i.latitude, i.longitude))
+                connection.commit()
+                print('New station added')
 
             # insert new bike availibility data
             sql = "INSERT INTO `bike_availibility` (`Number`, `Time`, `Available_bike_stands`, `Available_bikes`, `Status`) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (i.number, i.time, i.available_bike_stands, i.available_bikes, i.status))
+            connection.commit()
+            print("New bike info added")
 
         # weather information
         sql = "INSERT INTO `weather` (`Time`, `Weather`, `Temp`, `Feels_like`, `Humidity`) VALUES (%s, %s, %s, %s, %s)"
         cursor.execute(sql, (weather.time, weather.weather, weather.temp, weather.feels_like, weather.humidity))
-
-    connection.commit()
+        connection.commit()
+        print("New weather info added")
 
 print(now)
