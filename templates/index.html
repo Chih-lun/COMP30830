@@ -2,12 +2,87 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>My Google Map</title>
+    <title>Dublin Bike</title>
     <link href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" type="text/css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
 </head>
 <body>
-<h1>Google Map</h1>
-<div id="map"></div>
+<h1>DUBLIN BIKE</h1>
+<div class="container">
+
+    <div id="map"></div>
+
+    <div id="weatherInfo">
+        <img src="" alt="can not load the image"  id="weather-icon" width="300" height="300">
+        <div id="location">Dublin</div>
+        <div id ="Sentence">
+            <span id="Weather"></span>&nbsp;<span>Day.</span><span id="text"></span>
+        </div>
+        <div class="info">
+            <h4>Temperature: <span id="Temp"></span>&nbsp;<span>℃</span></h4>
+            <h4>Sensible Temperature: <span id="senTemp"></span>&nbsp;<span>℃</span></h4>
+            <h4>Humidity: <span id="Humidity"></span>&nbsp;<span>Degree</span></h4>
+        </div>
+    </div>
+
+</div>
+
+<h1 style="text-align:center;">Bike Prediction:</h1>
+
+<div id="Prediction">
+    <div id="InputBox">
+    <form action="/" method="POST">
+        <fieldset>
+            <legend>
+                <h2 style="text-align:center;">Input: </h2>
+            </legend>
+            <h3>Select a bike station:
+            <span id="stationMenu">
+            <select name ="selectStation" id="selectStation" ></select>
+            </span>
+            </h3>
+
+            <br>
+            <br>
+            <h3>Set a time step:
+            <span id="timeSelect">
+                <input name="time_step" type="number" min = "1" step="1" value="1">
+            </span>
+            </h3>
+            <input type="submit" />
+        </fieldset>
+    </form>
+    </div>
+
+
+    <div id="ResultBox">
+        <table style="width:100%">
+            <tr>
+                <th>Station Number:</th>
+                <td>{{ predict_data[0]['Number'] }}</td>
+            </tr>
+            <tr>
+                <th>Predicted Available Bike: </th>
+                <td>{{ predict_data[0]['Available_bike'] }}</td>
+            </tr>
+            <tr>
+                <th>Predicted Available Bike Stand: </th>
+                <td>{{ predict_data[0]['Available_bike_stands'] }}</td>
+            </tr>
+            <tr>
+                <th>Forecasted Temperature: </th>
+                <td>{{ predict_data[0]['Temp'] }}</td>
+            </tr>
+            <tr>
+                <th>Forecasted Humidity: </th>
+                <td>{{ predict_data[0]['Humidity'] }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/index.js')}}"></script>
 <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH1lODG-3BdFEWUIzfroUaO_Iur4IXVis&callback=initMap&libraries=&v=weekly"
@@ -15,12 +90,68 @@
 ></script>
 
 <script>
+    var Weather;
+
+    function initWeather(){
+        var weather_info = weatherInfo;
+        var Feels_like = weather_info[0].Feels_like;
+        var Humidity = weather_info[0].Humidity;
+        var Temp = weather_info[0].Temp;
+        Weather = weather_info[0].Weather;
+        document.getElementById("Weather").innerHTML = Weather;
+        document.getElementById("Temp").innerHTML = Temp;
+        document.getElementById("senTemp").innerHTML = Feels_like;
+        document.getElementById("Humidity").innerHTML = Humidity;
+    }
+
+    function changeImage(Weather) {
+        if(Weather == "Clear"){
+            var image = document.getElementById("weather-icon");
+            image.src = "{{ url_for('static', filename='image/sun.jpg')}}"
+            var words = " Good for cycling.";
+            document.getElementById("text").innerText = words;
+
+        }
+        else if(Weather == "Clouds"){
+            var image = document.getElementById("weather-icon");
+            image.src = "{{ url_for('static', filename='image/cloud.jpg')}}"
+            var words = " Cool!";
+            document.getElementById("text").innerText = words;
+        }
+        else if(Weather == "Rain"){
+            var image = document.getElementById("weather-icon");
+            image.src = "{{ url_for('static', filename='image/rain.jpg')}}"
+            var words = " Slow down please.";
+            document.getElementById("text").innerText = words;
+        }
+
+    }
+
+    function stationList(){
+        var station_info = stationInfo;
+        console.log(station_info);
+        var select = document.getElementById("selectStation")
+        for (var i=0; i < stationInfo.length; i++){
+            var option = station_info[i].Address;
+            var option_value = station_info[i].Number;
+            console.log(option);
+            console.log(option_value);
+            var el = document.createElement("option");
+            el.textContent = option;
+            el.value = option_value;
+            select.appendChild(el);
+        }
+    }
+
     //The data of bike stations is divided into dynamic data and static data, which is held in two different APIs,
     //Create two variables stationInfo and bikeInfo store the data parsed from the json files.
-
+    // transferred from flask
     var stationInfo = JSON.parse({{ stations | tojson | safe }});
     var bikeInfo = JSON.parse({{ bike_availability | tojson | safe }});
-
+    var weatherInfo = JSON.parse({{ weather | tojson | safe }});
+    initWeather();
+    changeImage(Weather)
+    stationList()
 </script>
 </body>
 </html>

@@ -42,14 +42,19 @@ class weather(db.Model):
         self.Feels_like = Feels_like
         self.Humidity = Humidity
 
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def home():
+    # fetch the data from our own api
     stations_data = requests.get('https://dublinbikeapi.herokuapp.com/stations')
     bike_availability_data = requests.get('https://dublinbikeapi.herokuapp.com/bike_availibility')
     weather_data = requests.get('https://dublinbikeapi.herokuapp.com/weather')
 
-    number = 2
-    step = 1
+    if request.method == 'GET':
+        number = 2
+        step = 1
+    else:
+        number = int(request.form['selectStation'])
+        step = int(request.form['time_step'])
 
     #build model
     all_weather = weather.query.all()
@@ -89,6 +94,7 @@ def home():
 
     df_combine = df_bike.merge(df_weather,left_on='Time', right_on='Time')
 
+    # prediction
     # 10 min per step
     df_test_station=df_combine.groupby("Number").get_group(number)
     df_test_station = df_test_station.drop(['Number', 'ID_x', 'ID_y', 'Status', 'Weather', "Feels_like"], axis=1)
@@ -107,9 +113,10 @@ def home():
     prediction['Available_bike'] = int(round(df_pred["Available_bike"].mean()))
     prediction['Available_bike_stands'] = int(round(df_pred["Available_bike_stands"].mean()))
     predict_data.append(prediction)
-    print(str(predict_data))
 
-    return render_template('index.html', stations=stations_data.text, bike_availability=bike_availability_data.text, weather=weather_data.text, predict_data=str(predict_data))
+    # send data to front-end
+    return render_template('index.html', stations=stations_data.text, bike_availability=bike_availability_data.text, weather=weather_data.text, predict_data=predict_data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
