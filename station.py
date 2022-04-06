@@ -1,8 +1,6 @@
 import requests
 import datetime
 import pymysql
-import time
-
 
 class Station():
     def __init__(self, time, number, address, latitude, longitude, available_bike_stands, available_bikes, status):
@@ -30,6 +28,7 @@ BIKE_API = "12b14fd3d4ed7ad3c69cd088c54135d43d4e61c5"
 BIKE_URL = "https://api.jcdecaux.com/vls/v1/stations"
 bike_request = requests.get(BIKE_URL, params={"apiKey": BIKE_API, "contract": 'Dublin'})
 bike_data = bike_request.json()
+
 for i in bike_data:
     number = i['number']
     address = i['address']
@@ -50,8 +49,19 @@ connection = pymysql.connect(host='database-1.c5ekejexdq4k.us-east-1.rds.amazona
 
 with connection:
     with connection.cursor() as cursor:
+        cursor.execute('SELECT * FROM stations')
+        rows = cursor.fetchall()
+        current_stations_number = [i[0] for i in rows]
+
+
         # bike information
         for i in bike_stations:
+            # add new station if any is new
+            if i.number not in current_stations_number:
+                sql = "INSERT INTO `stations` (`Number`, `Address`, `Latitude`, `Longitude`) VALUES (%s, %s, %s, %s)"
+                cursor.execute(sql, (i.number, i.address, i.latitude, i.longitude))
+
+            # insert new bike availibility data
             sql = "INSERT INTO `bike_availibility` (`Number`, `Time`, `Available_bike_stands`, `Available_bikes`, `Status`) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql, (i.number, i.time, i.available_bike_stands, i.available_bikes, i.status))
 
