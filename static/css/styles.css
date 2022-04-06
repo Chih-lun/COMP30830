@@ -1,0 +1,109 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+body {
+  font-family: 'Lora', serif;
+  background-color: #EFFFFD;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+
+}
+
+#map{
+  height:600px;
+  width:100%;
+  float: left;
+  margin: 10px;
+}
+
+#weatherInfo{
+  height:600px;
+  width: 30%;
+  float: right;
+  margin: 10px;
+  background: rgb(52, 207, 235);
+  text-align: center;
+  background: radial-gradient(
+          circle,
+          rgba(95, 215, 237, 0.6334908963585435) 0%,
+          rgba(55, 194, 219, 0.8407738095238095) 35%,
+          rgba(230, 224, 113, 1) 100%
+  );
+}
+
+.Sentence {
+  display: flex;
+  margin: 15px 0;
+  font-size: 1.5rem;
+  float: left;
+}
+
+#location {
+  font-size: 3rem;
+  font-weight: 800;
+  font-style: italic;
+}
+#Weather {
+  font-size: 1.25rem;
+  text-transform: capitalize;
+}
+
+#Prediction{
+  height: 800px;
+  width: 100%;
+  display: flex;
+}
+
+.fieldset{
+  height: 250px;
+  border-width: 10px;
+  border-color: #42C2FF;
+}
+
+#InputBox{
+  height: 400px;
+  width: 45%;
+  float: left;
+  margin: 10px;
+  flex: 1;
+  text-align: center;
+
+}
+
+#selectStation{
+  position: relative;
+  width: 300px;
+  height: 25px;
+}
+
+
+#time_step{
+  width: 300px;
+  height: 25px;
+}
+
+#submitButton{
+  width: 100px;
+  height: 25px;
+  font-family: 'Lora', serif;
+  font-size: medium;
+}
+
+#ResultBox{
+  height: 400px;
+  width: 45%;
+  float: right;
+  margin: 10px;
+  flex: 1;
+  text-align: center;
+}
