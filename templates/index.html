@@ -46,6 +46,7 @@
 
             <br>
             <br>
+            <p>1 Step = 10 minutes </p>
             <h3>Set a time step:
             <span id="timeSelect">
                 <input name="time_step" type="number" min = "1" step="1" value="1">
@@ -60,8 +61,15 @@
     <div id="ResultBox">
         <table style="width:100%">
             <tr>
+                <td>{{ predict_data[0]['Later'] }} Minutes Later:</td>
+            </tr>
+            <tr>
                 <th>Station Number:</th>
                 <td>{{ predict_data[0]['Number'] }}</td>
+            </tr>
+            <tr>
+                <th>Station Address:</th>
+                <td>{{ predict_data[0]['Address'] }}</td>
             </tr>
             <tr>
                 <th>Predicted Available Bike: </th>

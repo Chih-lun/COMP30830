@@ -108,6 +108,11 @@ def home():
     predict_data = []
     prediction = {}
     prediction['Number'] = number
+    for i in stations_data.json():
+        if i['Number'] == number:
+            prediction['Address'] = i['Address']
+            break
+    prediction['Later'] = step * 10
     prediction['Temp'] = int(round(df_pred["Temp"].mean()))
     prediction['Humidity'] = int(round(df_pred["Humidity"].mean()))
     prediction['Available_bike'] = int(round(df_pred["Available_bike"].mean()))
