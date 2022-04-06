@@ -7,6 +7,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
 <h1>DUBLIN BIKE</h1>
@@ -34,60 +35,87 @@
 <div id="Prediction">
     <div id="InputBox">
     <form action="/" method="POST">
-        <fieldset>
+        <fieldset class="fieldset">
             <legend>
-                <h2 style="text-align:center;">Input: </h2>
+                <h2 style="text-align:center;">Input</h2>
             </legend>
+            <br>
             <h3>Select a bike station:
-            <span id="stationMenu">
+            <span>
             <select name ="selectStation" id="selectStation" ></select>
             </span>
             </h3>
 
             <br>
             <br>
-            <p>1 Step = 10 minutes </p>
+            <p>(Note: 1 Step = 10 minutes)</p>
             <h3>Set a time step:
-            <span id="timeSelect">
+            <span>
                 <input name="time_step" type="number" min = "1" step="1" value="1">
             </span>
             </h3>
-            <input type="submit" />
+            <br>
+            <br>
+            <input id="submitButton" type="submit" />
         </fieldset>
     </form>
     </div>
 
 
     <div id="ResultBox">
-        <table style="width:100%">
-            <tr>
-                <td>{{ predict_data[0]['Later'] }} Minutes Later:</td>
-            </tr>
-            <tr>
-                <th>Station Number:</th>
-                <td>{{ predict_data[0]['Number'] }}</td>
-            </tr>
-            <tr>
-                <th>Station Address:</th>
-                <td>{{ predict_data[0]['Address'] }}</td>
-            </tr>
-            <tr>
-                <th>Predicted Available Bike: </th>
-                <td>{{ predict_data[0]['Available_bike'] }}</td>
-            </tr>
-            <tr>
-                <th>Predicted Available Bike Stand: </th>
-                <td>{{ predict_data[0]['Available_bike_stands'] }}</td>
-            </tr>
-            <tr>
-                <th>Forecasted Temperature: </th>
-                <td>{{ predict_data[0]['Temp'] }}</td>
-            </tr>
-            <tr>
-                <th>Forecasted Humidity: </th>
-                <td>{{ predict_data[0]['Humidity'] }}</td>
-            </tr>
-        </table>
+        <fieldset class="fieldset">
+            <legend>
+                <h2 style="text-align:center;">Result</h2>
+            </legend>
+            <br>
+            <table style="width:100%">
+                <tr>
+                    <td>{{ predict_data[0]['Later'] }} Minutes Later:</td>
+                </tr>
+                <tr>
+                    <th>
+                    <span><i class="material-icons">123</i></span>
+                    <span>Station Number:</span>
+                    </th>
+                    <td>{{ predict_data[0]['Number'] }}</td>
+                </tr>
+                <tr>
+                    <th>
+                    <span><i class="material-icons">local_gas_station</i></span>
+                    <span>Station Address:</span>
+                    </th>
+                    <td>{{ predict_data[0]['Address'] }}</td>
+                </tr>
+                <tr>
+                    <th>
+                        <span><i class="material-icons">directions_bike</i></span>
+                        <span>Predicted Available Bike: </span>
+                    </th>
+                    <td>{{ predict_data[0]['Available_bike'] }}</td>
+                </tr>
+                <tr>
+                    <th>
+                        <span><i class="material-icons">bike_scooter</i></span>
+                        <span>Predicted Available Bike Stand: </span>
+                    </th>
+                    <td>{{ predict_data[0]['Available_bike_stands'] }}</td>
+                </tr>
+                <tr>
+                    <th>
+                        <span><i class="material-icons">device_thermostat</i></span>
+                        <span>Forecasted Temperature: </span>
+                    </th>
+                    <td>{{ predict_data[0]['Temp'] }}</td>
+                </tr>
+                <tr>
+                    <th>
+                        <span><i class="material-icons">water_drop</i></span>
+                        <span>Forecasted Humility: </span>
+                    </th>
+                    <td>{{ predict_data[0]['Humidity'] }}</td>
+                </tr>
+            </table>
+        </fieldset>
     </div>
 </div>
 

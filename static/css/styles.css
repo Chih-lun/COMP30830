@@ -59,9 +59,15 @@ body {
 }
 
 #Prediction{
-  height: 400px;
+  height: 800px;
   width: 100%;
   display: flex;
+}
+
+.fieldset{
+  height: 250px;
+  border-width: 10px;
+  border-color: #42C2FF;
 }
 
 #InputBox{
@@ -69,6 +75,28 @@ body {
   width: 45%;
   float: left;
   margin: 10px;
+  flex: 1;
+  text-align: center;
+
+}
+
+#selectStation{
+  position: relative;
+  width: 300px;
+  height: 25px;
+}
+
+
+#time_step{
+  width: 300px;
+  height: 25px;
+}
+
+#submitButton{
+  width: 100px;
+  height: 25px;
+  font-family: 'Lora', serif;
+  font-size: medium;
 }
 
 #ResultBox{
@@ -76,4 +104,6 @@ body {
   width: 45%;
   float: right;
   margin: 10px;
+  flex: 1;
+  text-align: center;
 }
