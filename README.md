@@ -10,7 +10,7 @@ There are 3 major parts in this application. First, it displays the locations of
 First, the data will be collected from JCDecaux API to RDS MySQL database through scrapper every 10 minutes. However, the scrapper is hosted on Heroku. Second, the API that we created connects to RDS MySQL database. It transmits the data that the application needs. Besides, the API is hosted on Heroku. Third, the backend integrates html, css, javascript, and machine learning model. Thus, the Flask application can serve the information mentioned in section 2.
 
 # Section 4. AWS EC2
-We host the website through AWS EC2. In the following are the instruction.
+We host the website through AWS EC2. In the following are the instructions.
 
 1. Connect to EC2.
 2. Install python3, pip, nginx, gunicorn3
