@@ -16,5 +16,5 @@ We host the website through AWS EC2. In the following are the instructions.
 1. Connect to EC2.
 2. Install python3, pip, nginx, gunicorn3
 3. git clone https://github.com/Chih-lun/COMP30830.git
-4. cd COMP30830
+4. cd COMP30830/Flask
 5. gunicorn3 main:app
